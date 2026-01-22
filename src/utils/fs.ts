@@ -121,3 +121,19 @@ export async function writeFile(filePath: string, content: string): Promise<void
 export function relativePath(fullPath: string, rootPath: string): string {
   return path.relative(rootPath, fullPath);
 }
+
+/**
+ * Validate that a path stays within the root directory (prevent path traversal)
+ * Returns the resolved path if valid, null if path escapes root
+ */
+export function safePath(relativePath: string, rootPath: string): string | null {
+  const resolved = path.resolve(rootPath, relativePath);
+  const normalizedRoot = path.resolve(rootPath);
+
+  // Check that resolved path starts with root path
+  if (!resolved.startsWith(normalizedRoot + path.sep) && resolved !== normalizedRoot) {
+    return null;
+  }
+
+  return resolved;
+}

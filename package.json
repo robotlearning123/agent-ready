@@ -1,12 +1,17 @@
 {
   "name": "agent-readiness",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Factory-compatible repo maturity scanner for AI agent readiness",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
     "agent-ready": "./dist/index.js"
   },
+  "files": [
+    "dist",
+    "profiles",
+    "templates"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
@@ -18,7 +23,8 @@
     "format:check": "prettier --check src/ test/",
     "typecheck": "tsc --noEmit",
     "check": "npm run typecheck && npm run lint && npm run format:check",
-    "prepare": "husky"
+    "prepare": "husky",
+    "prepublishOnly": "npm run check && npm run build"
   },
   "lint-staged": {
     "*.ts": [
@@ -26,15 +32,25 @@
       "prettier --write"
     ]
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robotlearning123/agent-readiness.git"
+  },
+  "homepage": "https://github.com/robotlearning123/agent-readiness#readme",
+  "bugs": {
+    "url": "https://github.com/robotlearning123/agent-readiness/issues"
+  },
   "keywords": [
     "ai",
     "agent",
     "readiness",
     "scanner",
     "factory",
-    "devops"
+    "devops",
+    "cli",
+    "maturity"
   ],
-  "author": "",
+  "author": "robotlearning123",
   "license": "MIT",
   "dependencies": {
     "chalk": "^5.3.0",

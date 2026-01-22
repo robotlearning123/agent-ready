@@ -73,7 +73,7 @@ export async function executeGitHubActionPresent(
     if (!content) continue;
 
     try {
-      const workflow = yaml.load(content) as WorkflowConfig;
+      const workflow = yaml.load(content, { schema: yaml.JSON_SCHEMA }) as WorkflowConfig;
       if (!workflow?.jobs) continue;
 
       for (const job of Object.values(workflow.jobs)) {

@@ -9,9 +9,10 @@ import { PILLARS, LEVELS } from '../types.js';
 
 /**
  * Parse YAML content to Profile
+ * Uses JSON_SCHEMA for security - prevents arbitrary code execution
  */
 export function parseProfile(content: string): Profile {
-  const parsed = yaml.load(content) as RawProfile;
+  const parsed = yaml.load(content, { schema: yaml.JSON_SCHEMA }) as RawProfile;
 
   if (!parsed || typeof parsed !== 'object') {
     throw new Error('Invalid profile: empty or not an object');

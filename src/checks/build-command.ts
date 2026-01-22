@@ -4,9 +4,8 @@
  * Detects if build/test commands are defined in package.json, Makefile, etc.
  */
 
-import * as path from 'node:path';
 import type { BuildCommandDetectCheck, CheckResult, ScanContext } from '../types.js';
-import { readFileCached } from '../utils/fs.js';
+import { readFileCached, safePath } from '../utils/fs.js';
 
 const DEFAULT_FILES = ['package.json', 'Makefile', 'pyproject.toml', 'Cargo.toml'];
 
@@ -25,7 +24,10 @@ export async function executeBuildCommandDetect(
   const foundCommands: Array<{ file: string; command: string }> = [];
 
   for (const file of filesToCheck) {
-    const filePath = path.join(context.root_path, file);
+    // Validate path doesn't escape root directory
+    const filePath = safePath(file, context.root_path);
+    if (!filePath) continue;
+
     const content = await readFileCached(filePath, context.file_cache);
 
     if (!content) continue;

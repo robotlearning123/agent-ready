@@ -7,15 +7,23 @@
 
 import { Command } from 'commander';
 import * as path from 'node:path';
+import * as fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { scanCommand } from './commands/scan.js';
 import { initCommand } from './commands/init.js';
+
+// Read version from package.json
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const packageJson = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf-8')
+);
 
 const program = new Command();
 
 program
   .name('agent-ready')
   .description('Factory-compatible repo maturity scanner for AI agent readiness')
-  .version('0.1.0');
+  .version(packageJson.version);
 
 // Scan command
 program

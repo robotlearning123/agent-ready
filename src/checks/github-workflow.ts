@@ -79,7 +79,7 @@ export async function executeGitHubWorkflowEvent(
     if (!content) continue;
 
     try {
-      const parsed = yaml.load(content);
+      const parsed = yaml.load(content, { schema: yaml.JSON_SCHEMA });
       if (!isWorkflowConfig(parsed) || !parsed.on) continue;
 
       const hasEvent = checkForEvent(parsed.on, check.event, check.branches);

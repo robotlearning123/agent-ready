@@ -4,16 +4,28 @@
  * Checks if a file exists and optionally matches a content regex
  */
 
-import * as path from 'node:path';
 import type { FileExistsCheck, CheckResult, ScanContext } from '../types.js';
-import { fileExists as fileExistsUtil, readFileCached } from '../utils/fs.js';
+import { fileExists as fileExistsUtil, readFileCached, safePath } from '../utils/fs.js';
 import { safeRegexTest } from '../utils/regex.js';
 
 export async function executeFileExists(
   check: FileExistsCheck,
   context: ScanContext
 ): Promise<CheckResult> {
-  const filePath = path.join(context.root_path, check.path);
+  // Validate path doesn't escape root directory (prevent path traversal attacks)
+  const filePath = safePath(check.path, context.root_path);
+
+  if (!filePath) {
+    return {
+      check_id: check.id,
+      check_name: check.name,
+      pillar: check.pillar,
+      level: check.level,
+      passed: false,
+      required: check.required,
+      message: `Invalid path (path traversal detected): ${check.path}`,
+    };
+  }
 
   // Check if file exists
   const exists = await fileExistsUtil(filePath);
