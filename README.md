@@ -27,6 +27,29 @@ npx agent-ready scan .
 npm install -g agent-ready
 ```
 
+## Online API
+
+Use the hosted API for scanning without installation:
+
+```bash
+# Submit a scan
+curl -X POST http://137.184.205.191:3000/api/scan \
+  -H "Content-Type: application/json" \
+  -d '{"repo_url":"https://github.com/owner/repo","language":"en"}'
+
+# Check scan status
+curl http://137.184.205.191:3000/api/scan/{scan_id}
+
+# List available profiles
+curl http://137.184.205.191:3000/api/profiles
+```
+
+### API Features
+- **Multi-Agent Parallel Analysis**: 9 agents analyze different pillars concurrently
+- **Chinese/English Reports**: Set `"language":"zh"` or `"language":"en"`
+- **Fast Scanning**: ~300ms per repository
+- **Detailed Reports**: Executive summary, pillar details, improvement roadmap
+
 ## Claude Code Integration
 
 Install the skill for Claude Code:
@@ -236,19 +259,28 @@ npm run build
 
 ```
 agent-ready/
-├── src/
+├── src/                      # CLI source code
 │   ├── index.ts              # CLI entry
 │   ├── types.ts              # Type definitions
-│   ├── scanner.ts            # Main orchestrator
 │   ├── checks/               # Check implementations
 │   ├── engine/               # Level gating logic
 │   ├── profiles/             # Profile loader
-│   ├── output/               # JSON/Markdown formatters
-│   ├── templates/            # Init command templates
 │   └── utils/                # FS, git, YAML utilities
+├── api/                      # Online API (Multi-Agent)
+│   ├── src/
+│   │   ├── index.ts          # Fastify server
+│   │   ├── agents/           # Multi-agent system
+│   │   │   ├── orchestrator.ts
+│   │   │   ├── evaluator.ts
+│   │   │   ├── reporter.ts
+│   │   │   └── pillars/      # 9 pillar agents
+│   │   ├── routes/           # API routes
+│   │   └── i18n/             # Chinese/English
+│   ├── Dockerfile
+│   └── docker-compose.yml
 ├── profiles/
 │   └── factory_compat.yaml   # Default profile
-├── templates/                # Template files
+├── templates/                # Init command templates
 └── test/                     # Tests and fixtures
 ```
 
