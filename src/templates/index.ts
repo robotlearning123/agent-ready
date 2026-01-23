@@ -55,12 +55,46 @@ const TEMPLATE_DEFS: Array<Omit<Template, 'content'>> = [
     description: 'GitHub Actions CI workflow',
     targetPath: '.github/workflows/ci.yml',
   },
+  // New templates for Factory parity
+  {
+    checkId: 'env.devcontainer',
+    name: 'Devcontainer',
+    description: 'VS Code development container configuration',
+    targetPath: '.devcontainer/devcontainer.json',
+  },
+  {
+    checkId: 'security.codeowners',
+    name: 'CODEOWNERS',
+    description: 'Code ownership definitions for review routing',
+    targetPath: '.github/CODEOWNERS',
+  },
+  {
+    checkId: 'task_discovery.issue_templates',
+    name: 'Issue Templates',
+    description: 'GitHub issue templates for bug reports and features',
+    targetPath: '.github/ISSUE_TEMPLATE/bug_report.md',
+  },
+  {
+    checkId: 'task_discovery.pr_template',
+    name: 'PR Template',
+    description: 'Pull request template for consistent contributions',
+    targetPath: '.github/PULL_REQUEST_TEMPLATE.md',
+  },
+  {
+    checkId: 'env.docker_compose',
+    name: 'Docker Compose',
+    description: 'Local development services configuration',
+    targetPath: 'docker-compose.yml',
+  },
 ];
 
 // Map source file names (some differ from target)
 const SOURCE_FILE_MAP: Record<string, string> = {
   '.gitignore': '.gitignore.template',
   '.github/workflows/ci.yml': 'github-workflow.yml',
+  '.github/CODEOWNERS': 'CODEOWNERS.template',
+  '.github/ISSUE_TEMPLATE/bug_report.md': 'ISSUE_TEMPLATE/bug_report.md',
+  '.github/PULL_REQUEST_TEMPLATE.md': 'PULL_REQUEST_TEMPLATE.md',
 };
 
 /**

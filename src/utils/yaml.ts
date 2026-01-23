@@ -198,6 +198,19 @@ function validateCheck(raw: RawCheck, index: number): CheckConfig {
         frameworks: raw.frameworks as string[],
       };
 
+    case 'dependency_detect':
+      if (!Array.isArray(raw.packages)) {
+        throw new Error(
+          `Check '${raw.id}' of type 'dependency_detect' missing required 'packages' array`
+        );
+      }
+      return {
+        ...base,
+        type: 'dependency_detect',
+        packages: raw.packages as string[],
+        config_files: raw.config_files as string[] | undefined,
+      };
+
     default:
       throw new Error(`Check '${raw.id}' has unknown type '${raw.type}'`);
   }

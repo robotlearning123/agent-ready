@@ -141,6 +141,36 @@ checks:
     required: false
     path: tsconfig.json
 
+  - id: style.precommit_hooks
+    name: Pre-commit hooks
+    description: Pre-commit hooks configured for code quality
+    type: any_of
+    pillar: style
+    level: L2
+    required: false
+    checks:
+      - id: style.husky
+        type: path_glob
+        name: Husky hooks
+        pillar: style
+        level: L2
+        required: false
+        pattern: ".husky/*"
+      - id: style.precommit_config
+        type: file_exists
+        name: Pre-commit config
+        pillar: style
+        level: L2
+        required: false
+        path: .pre-commit-config.yaml
+      - id: style.lefthook
+        type: file_exists
+        name: Lefthook config
+        pillar: style
+        level: L2
+        required: false
+        path: lefthook.yml
+
   # =============================================================================
   # PILLAR: Build System (build)
   # =============================================================================
@@ -238,6 +268,29 @@ checks:
         required: false
         path: .mocharc.json
 
+  - id: test.integration_tests
+    name: Integration tests
+    description: Integration test files exist
+    type: any_of
+    pillar: test
+    level: L3
+    required: false
+    checks:
+      - id: test.integration_dir
+        type: path_glob
+        name: Integration test directory
+        pillar: test
+        level: L3
+        required: false
+        pattern: "**/integration/**/*.{test,spec}.{js,ts,jsx,tsx}"
+      - id: test.integration_files
+        type: path_glob
+        name: Integration test files
+        pillar: test
+        level: L3
+        required: false
+        pattern: "**/*.integration.{test,spec}.{js,ts,jsx,tsx}"
+
   # =============================================================================
   # PILLAR: Security (security)
   # =============================================================================
@@ -270,6 +323,36 @@ checks:
     required: false
     path: .github/dependabot.yml
 
+  - id: security.codeowners
+    name: CODEOWNERS file
+    description: Code ownership defined for review routing
+    type: any_of
+    pillar: security
+    level: L3
+    required: false
+    checks:
+      - id: security.codeowners_github
+        type: file_exists
+        name: GitHub CODEOWNERS
+        pillar: security
+        level: L3
+        required: false
+        path: .github/CODEOWNERS
+      - id: security.codeowners_root
+        type: file_exists
+        name: Root CODEOWNERS
+        pillar: security
+        level: L3
+        required: false
+        path: CODEOWNERS
+      - id: security.codeowners_docs
+        type: file_exists
+        name: Docs CODEOWNERS
+        pillar: security
+        level: L3
+        required: false
+        path: docs/CODEOWNERS
+
   # =============================================================================
   # PILLAR: Observability (observability)
   # =============================================================================
@@ -282,6 +365,40 @@ checks:
     level: L3
     required: false
     frameworks: ["winston", "pino", "bunyan", "log4js"]
+
+  - id: observability.tracing
+    name: Distributed tracing
+    description: Distributed tracing instrumentation configured
+    type: dependency_detect
+    pillar: observability
+    level: L4
+    required: false
+    packages:
+      - "@opentelemetry/sdk-trace-node"
+      - "@opentelemetry/api"
+      - "dd-trace"
+      - "jaeger-client"
+      - "@sentry/tracing"
+      - "opentelemetry-sdk"
+      - "ddtrace"
+    config_files:
+      - "otel.config.js"
+      - "tracing.js"
+      - "instrumentation.js"
+
+  - id: observability.metrics
+    name: Metrics collection
+    description: Application metrics instrumentation
+    type: dependency_detect
+    pillar: observability
+    level: L4
+    required: false
+    packages:
+      - "prom-client"
+      - "statsd-client"
+      - "@opentelemetry/sdk-metrics"
+      - "hot-shots"
+      - "prometheus_client"
 
   # =============================================================================
   # PILLAR: Environment (env)
@@ -309,6 +426,59 @@ checks:
         level: L2
         required: false
         path: .env.template
+
+  - id: env.devcontainer
+    name: Devcontainer configuration
+    description: Development container configuration for consistent environments
+    type: any_of
+    pillar: env
+    level: L3
+    required: false
+    checks:
+      - id: env.devcontainer_json
+        type: file_exists
+        name: Devcontainer config
+        pillar: env
+        level: L3
+        required: false
+        path: .devcontainer/devcontainer.json
+      - id: env.devcontainer_dockerfile
+        type: file_exists
+        name: Devcontainer Dockerfile
+        pillar: env
+        level: L3
+        required: false
+        path: .devcontainer/Dockerfile
+
+  - id: env.docker_compose
+    name: Local services setup
+    description: Docker Compose for local development services
+    type: any_of
+    pillar: env
+    level: L3
+    required: false
+    checks:
+      - id: env.docker_compose_yml
+        type: file_exists
+        name: docker-compose.yml
+        pillar: env
+        level: L3
+        required: false
+        path: docker-compose.yml
+      - id: env.docker_compose_yaml
+        type: file_exists
+        name: docker-compose.yaml
+        pillar: env
+        level: L3
+        required: false
+        path: docker-compose.yaml
+      - id: env.compose_yml
+        type: file_exists
+        name: compose.yml
+        pillar: env
+        level: L3
+        required: false
+        path: compose.yml
 
   # =============================================================================
   # PILLAR: CI/CD (ci)
@@ -393,3 +563,53 @@ checks:
         level: L3
         required: false
         path: nx.json
+
+  # =============================================================================
+  # PILLAR: Task Discovery (task_discovery)
+  # =============================================================================
+
+  - id: task_discovery.issue_templates
+    name: Issue templates
+    description: GitHub issue templates for structured bug reports and features
+    type: any_of
+    pillar: task_discovery
+    level: L2
+    required: false
+    checks:
+      - id: task_discovery.issue_template_dir
+        type: path_glob
+        name: Issue template directory
+        pillar: task_discovery
+        level: L2
+        required: false
+        pattern: ".github/ISSUE_TEMPLATE/*.{md,yml,yaml}"
+      - id: task_discovery.issue_template_single
+        type: file_exists
+        name: Single issue template
+        pillar: task_discovery
+        level: L2
+        required: false
+        path: .github/ISSUE_TEMPLATE.md
+
+  - id: task_discovery.pr_template
+    name: Pull request template
+    description: PR template for consistent contribution format
+    type: any_of
+    pillar: task_discovery
+    level: L2
+    required: false
+    checks:
+      - id: task_discovery.pr_template_github
+        type: file_exists
+        name: GitHub PR template
+        pillar: task_discovery
+        level: L2
+        required: false
+        path: .github/PULL_REQUEST_TEMPLATE.md
+      - id: task_discovery.pr_template_root
+        type: file_exists
+        name: Root PR template
+        pillar: task_discovery
+        level: L2
+        required: false
+        path: PULL_REQUEST_TEMPLATE.md

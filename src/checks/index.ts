@@ -12,6 +12,7 @@ import { executeGitHubWorkflowEvent } from './github-workflow.js';
 import { executeGitHubActionPresent } from './github-action.js';
 import { executeBuildCommandDetect } from './build-command.js';
 import { executeLogFrameworkDetect } from './log-framework.js';
+import { executeDependencyDetect } from './dependency-detect.js';
 
 /**
  * Execute a check and return the result
@@ -38,6 +39,9 @@ export async function executeCheck(check: CheckConfig, context: ScanContext): Pr
 
     case 'log_framework_detect':
       return executeLogFrameworkDetect(check, context);
+
+    case 'dependency_detect':
+      return executeDependencyDetect(check, context);
 
     default: {
       // This should never happen due to TypeScript and YAML validation,
@@ -79,5 +83,6 @@ export function getSupportedCheckTypes(): string[] {
     'github_action_present',
     'build_command_detect',
     'log_framework_detect',
+    'dependency_detect',
   ];
 }

@@ -1,6 +1,6 @@
 {
   "name": "agent-readiness",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Factory-compatible repo maturity scanner for AI agent readiness",
   "type": "module",
   "main": "dist/index.js",

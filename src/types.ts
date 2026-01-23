@@ -15,7 +15,7 @@ export const LEVEL_NAMES: Record<Level, string> = {
   L5: 'Optimal',
 };
 
-// Pillar definitions (9 Pillars model)
+// Pillar definitions (10 Pillars model - Factory-compatible)
 export type Pillar =
   | 'docs'
   | 'style'
@@ -25,7 +25,8 @@ export type Pillar =
   | 'observability'
   | 'env'
   | 'ci'
-  | 'monorepo';
+  | 'monorepo'
+  | 'task_discovery';
 
 export const PILLARS: Pillar[] = [
   'docs',
@@ -37,6 +38,7 @@ export const PILLARS: Pillar[] = [
   'env',
   'ci',
   'monorepo',
+  'task_discovery',
 ];
 
 export const PILLAR_NAMES: Record<Pillar, string> = {
@@ -49,6 +51,7 @@ export const PILLAR_NAMES: Record<Pillar, string> = {
   env: 'Environment',
   ci: 'CI/CD',
   monorepo: 'Monorepo',
+  task_discovery: 'Task Discovery',
 };
 
 // Check type discriminators
@@ -59,7 +62,8 @@ export type CheckType =
   | 'github_workflow_event'
   | 'github_action_present'
   | 'build_command_detect'
-  | 'log_framework_detect';
+  | 'log_framework_detect'
+  | 'dependency_detect';
 
 // Base check configuration
 export interface BaseCheckConfig {
@@ -124,6 +128,13 @@ export interface LogFrameworkDetectCheck extends BaseCheckConfig {
   frameworks: string[]; // e.g., ['winston', 'pino', 'bunyan']
 }
 
+// dependency_detect check (for tracing, metrics, analytics packages)
+export interface DependencyDetectCheck extends BaseCheckConfig {
+  type: 'dependency_detect';
+  packages: string[]; // NPM/pip/cargo packages to detect
+  config_files?: string[]; // Config files that indicate usage (e.g., 'otel.config.js')
+}
+
 // Union type for all checks
 export type CheckConfig =
   | FileExistsCheck
@@ -132,7 +143,8 @@ export type CheckConfig =
   | GitHubWorkflowEventCheck
   | GitHubActionPresentCheck
   | BuildCommandDetectCheck
-  | LogFrameworkDetectCheck;
+  | LogFrameworkDetectCheck
+  | DependencyDetectCheck;
 
 // Check result
 export interface CheckResult {

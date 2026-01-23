@@ -1,0 +1,18 @@
+# Code ownership for {{PROJECT_NAME}}
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything in the repo
+* @{{GITHUB_USERNAME}}
+
+# Documentation
+/docs/ @{{GITHUB_USERNAME}}
+*.md @{{GITHUB_USERNAME}}
+
+# CI/CD configuration
+/.github/ @{{GITHUB_USERNAME}}
+
+# Source code
+/src/ @{{GITHUB_USERNAME}}
+
+# Tests
+/test/ @{{GITHUB_USERNAME}}

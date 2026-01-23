@@ -164,6 +164,12 @@ function getTemplateForCheck(check: CheckConfig): string | undefined {
     'env.dotenv_example': '.env.example',
     'security.gitignore': '.gitignore',
     'ci.github_workflow': '.github/workflows/ci.yml',
+    // New templates for Factory parity
+    'env.devcontainer': '.devcontainer/devcontainer.json',
+    'security.codeowners': '.github/CODEOWNERS',
+    'task_discovery.issue_templates': '.github/ISSUE_TEMPLATE/bug_report.md',
+    'task_discovery.pr_template': '.github/PULL_REQUEST_TEMPLATE.md',
+    'env.docker_compose': 'docker-compose.yml',
   };
 
   return templateMap[check.id];
