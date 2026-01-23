@@ -1,0 +1,28 @@
+# Code Owners for agent-ready
+# These users will be automatically requested for review
+
+# Default owners for everything
+* @anthropics/agent-ready-maintainers
+
+# Core source code
+/src/ @anthropics/agent-ready-maintainers
+
+# Check implementations
+/src/checks/ @anthropics/agent-ready-maintainers
+
+# Profiles and configuration
+/profiles/ @anthropics/agent-ready-maintainers
+
+# Documentation
+*.md @anthropics/agent-ready-maintainers
+/docs/ @anthropics/agent-ready-maintainers
+
+# Tests
+/test/ @anthropics/agent-ready-maintainers
+
+# CI/CD
+/.github/ @anthropics/agent-ready-maintainers
+
+# Package configuration
+package.json @anthropics/agent-ready-maintainers
+tsconfig.json @anthropics/agent-ready-maintainers
