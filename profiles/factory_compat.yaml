@@ -1,0 +1,615 @@
+# Factory-Compatible Agent Readiness Profile
+# Evaluates repositories against the 9 Pillars / 5 Levels model
+
+name: factory_compat
+version: "1.0.0"
+description: >
+  Default profile for evaluating repository maturity for AI agent readiness.
+  Based on the 9 Pillars model with 5 maturity levels (L1-L5).
+
+checks:
+  # =============================================================================
+  # PILLAR: Documentation (docs)
+  # =============================================================================
+
+  - id: docs.readme
+    name: README exists
+    description: Repository has a README file
+    type: file_exists
+    pillar: docs
+    level: L1
+    required: true
+    path: README.md
+
+  - id: docs.readme_sections
+    name: README has essential sections
+    description: README contains getting started, installation, and usage info
+    type: file_exists
+    pillar: docs
+    level: L2
+    required: false
+    path: README.md
+    content_regex: "(installation|getting started|usage|quick start)"
+    case_sensitive: false
+
+  - id: docs.contributing
+    name: Contributing guide
+    description: Repository has contributing guidelines
+    type: file_exists
+    pillar: docs
+    level: L2
+    required: false
+    path: CONTRIBUTING.md
+
+  - id: docs.agents_md
+    name: AGENTS.md exists
+    description: Repository has agent instructions file
+    type: any_of
+    pillar: docs
+    level: L3
+    required: false
+    checks:
+      - id: docs.agents_md.standard
+        name: Standard AGENTS.md
+        description: AGENTS.md in root
+        type: file_exists
+        pillar: docs
+        level: L3
+        required: false
+        path: AGENTS.md
+      - id: docs.agents_md.claude
+        name: Claude AGENTS.md
+        description: CLAUDE.md (alias for AGENTS.md)
+        type: file_exists
+        pillar: docs
+        level: L3
+        required: false
+        path: CLAUDE.md
+
+  - id: docs.changelog
+    name: Changelog exists
+    description: Repository maintains a changelog
+    type: any_of
+    pillar: docs
+    level: L3
+    required: false
+    checks:
+      - id: docs.changelog.standard
+        name: Standard CHANGELOG
+        type: file_exists
+        pillar: docs
+        level: L3
+        required: false
+        path: CHANGELOG.md
+      - id: docs.changelog.history
+        name: HISTORY.md
+        type: file_exists
+        pillar: docs
+        level: L3
+        required: false
+        path: HISTORY.md
+
+  # =============================================================================
+  # PILLAR: Code Style (style)
+  # =============================================================================
+
+  - id: style.editorconfig
+    name: EditorConfig
+    description: EditorConfig file for consistent formatting
+    type: file_exists
+    pillar: style
+    level: L1
+    required: false
+    path: .editorconfig
+
+  - id: style.linter_config
+    name: Linter configuration
+    description: ESLint, Prettier, or similar linter config exists
+    type: any_of
+    pillar: style
+    level: L2
+    required: false
+    checks:
+      - id: style.eslint
+        type: path_glob
+        name: ESLint config
+        pillar: style
+        level: L2
+        required: false
+        pattern: ".eslint*"
+      - id: style.prettier
+        type: path_glob
+        name: Prettier config
+        pillar: style
+        level: L2
+        required: false
+        pattern: ".prettier*"
+      - id: style.biome
+        type: file_exists
+        name: Biome config
+        pillar: style
+        level: L2
+        required: false
+        path: biome.json
+
+  - id: style.typescript
+    name: TypeScript configuration
+    description: TypeScript config for type safety
+    type: file_exists
+    pillar: style
+    level: L2
+    required: false
+    path: tsconfig.json
+
+  - id: style.precommit_hooks
+    name: Pre-commit hooks
+    description: Pre-commit hooks configured for code quality
+    type: any_of
+    pillar: style
+    level: L2
+    required: false
+    checks:
+      - id: style.husky
+        type: path_glob
+        name: Husky hooks
+        pillar: style
+        level: L2
+        required: false
+        pattern: ".husky/*"
+      - id: style.precommit_config
+        type: file_exists
+        name: Pre-commit config
+        pillar: style
+        level: L2
+        required: false
+        path: .pre-commit-config.yaml
+      - id: style.lefthook
+        type: file_exists
+        name: Lefthook config
+        pillar: style
+        level: L2
+        required: false
+        path: lefthook.yml
+
+  # =============================================================================
+  # PILLAR: Build System (build)
+  # =============================================================================
+
+  - id: build.package_json
+    name: Package manifest
+    description: package.json exists with build scripts
+    type: file_exists
+    pillar: build
+    level: L1
+    required: true
+    path: package.json
+
+  - id: build.scripts
+    name: Build scripts defined
+    description: Build and test scripts are defined
+    type: build_command_detect
+    pillar: build
+    level: L2
+    required: false
+    commands: ["build", "test"]
+    files: ["package.json", "Makefile"]
+
+  - id: build.lock_file
+    name: Lock file exists
+    description: Dependency lock file for reproducible builds
+    type: any_of
+    pillar: build
+    level: L2
+    required: false
+    checks:
+      - id: build.npm_lock
+        type: file_exists
+        name: npm lock
+        pillar: build
+        level: L2
+        required: false
+        path: package-lock.json
+      - id: build.yarn_lock
+        type: file_exists
+        name: yarn lock
+        pillar: build
+        level: L2
+        required: false
+        path: yarn.lock
+      - id: build.pnpm_lock
+        type: file_exists
+        name: pnpm lock
+        pillar: build
+        level: L2
+        required: false
+        path: pnpm-lock.yaml
+
+  # =============================================================================
+  # PILLAR: Testing (test)
+  # =============================================================================
+
+  - id: test.test_files
+    name: Test files exist
+    description: Project has test files
+    type: path_glob
+    pillar: test
+    level: L1
+    required: false
+    pattern: "**/*.{test,spec}.{js,ts,jsx,tsx}"
+    min_matches: 1
+
+  - id: test.config
+    name: Test configuration
+    description: Test framework configuration exists
+    type: any_of
+    pillar: test
+    level: L2
+    required: false
+    checks:
+      - id: test.jest_config
+        type: path_glob
+        name: Jest config
+        pillar: test
+        level: L2
+        required: false
+        pattern: "jest.config.*"
+      - id: test.vitest_config
+        type: path_glob
+        name: Vitest config
+        pillar: test
+        level: L2
+        required: false
+        pattern: "vitest.config.*"
+      - id: test.mocha_config
+        type: file_exists
+        name: Mocha config
+        pillar: test
+        level: L2
+        required: false
+        path: .mocharc.json
+
+  - id: test.integration_tests
+    name: Integration tests
+    description: Integration test files exist
+    type: any_of
+    pillar: test
+    level: L3
+    required: false
+    checks:
+      - id: test.integration_dir
+        type: path_glob
+        name: Integration test directory
+        pillar: test
+        level: L3
+        required: false
+        pattern: "**/integration/**/*.{test,spec}.{js,ts,jsx,tsx}"
+      - id: test.integration_files
+        type: path_glob
+        name: Integration test files
+        pillar: test
+        level: L3
+        required: false
+        pattern: "**/*.integration.{test,spec}.{js,ts,jsx,tsx}"
+
+  # =============================================================================
+  # PILLAR: Security (security)
+  # =============================================================================
+
+  - id: security.gitignore
+    name: .gitignore exists
+    description: Git ignore file to prevent committing sensitive files
+    type: file_exists
+    pillar: security
+    level: L1
+    required: true
+    path: .gitignore
+
+  - id: security.gitignore_secrets
+    name: .gitignore covers secrets
+    description: .gitignore includes common secret patterns
+    type: file_exists
+    pillar: security
+    level: L2
+    required: false
+    path: .gitignore
+    content_regex: "(\\.env|\\.secret|credentials)"
+
+  - id: security.dependabot
+    name: Dependabot configuration
+    description: Automated dependency updates configured
+    type: file_exists
+    pillar: security
+    level: L3
+    required: false
+    path: .github/dependabot.yml
+
+  - id: security.codeowners
+    name: CODEOWNERS file
+    description: Code ownership defined for review routing
+    type: any_of
+    pillar: security
+    level: L3
+    required: false
+    checks:
+      - id: security.codeowners_github
+        type: file_exists
+        name: GitHub CODEOWNERS
+        pillar: security
+        level: L3
+        required: false
+        path: .github/CODEOWNERS
+      - id: security.codeowners_root
+        type: file_exists
+        name: Root CODEOWNERS
+        pillar: security
+        level: L3
+        required: false
+        path: CODEOWNERS
+      - id: security.codeowners_docs
+        type: file_exists
+        name: Docs CODEOWNERS
+        pillar: security
+        level: L3
+        required: false
+        path: docs/CODEOWNERS
+
+  # =============================================================================
+  # PILLAR: Observability (observability)
+  # =============================================================================
+
+  - id: observability.logging
+    name: Logging framework
+    description: Structured logging framework is used
+    type: log_framework_detect
+    pillar: observability
+    level: L3
+    required: false
+    frameworks: ["winston", "pino", "bunyan", "log4js"]
+
+  - id: observability.tracing
+    name: Distributed tracing
+    description: Distributed tracing instrumentation configured
+    type: dependency_detect
+    pillar: observability
+    level: L4
+    required: false
+    packages:
+      - "@opentelemetry/sdk-trace-node"
+      - "@opentelemetry/api"
+      - "dd-trace"
+      - "jaeger-client"
+      - "@sentry/tracing"
+      - "opentelemetry-sdk"
+      - "ddtrace"
+    config_files:
+      - "otel.config.js"
+      - "tracing.js"
+      - "instrumentation.js"
+
+  - id: observability.metrics
+    name: Metrics collection
+    description: Application metrics instrumentation
+    type: dependency_detect
+    pillar: observability
+    level: L4
+    required: false
+    packages:
+      - "prom-client"
+      - "statsd-client"
+      - "@opentelemetry/sdk-metrics"
+      - "hot-shots"
+      - "prometheus_client"
+
+  # =============================================================================
+  # PILLAR: Environment (env)
+  # =============================================================================
+
+  - id: env.dotenv_example
+    name: Environment example
+    description: .env.example or similar template exists
+    type: any_of
+    pillar: env
+    level: L2
+    required: false
+    checks:
+      - id: env.dotenv_example.standard
+        type: file_exists
+        name: .env.example
+        pillar: env
+        level: L2
+        required: false
+        path: .env.example
+      - id: env.dotenv_template
+        type: file_exists
+        name: .env.template
+        pillar: env
+        level: L2
+        required: false
+        path: .env.template
+
+  - id: env.devcontainer
+    name: Devcontainer configuration
+    description: Development container configuration for consistent environments
+    type: any_of
+    pillar: env
+    level: L3
+    required: false
+    checks:
+      - id: env.devcontainer_json
+        type: file_exists
+        name: Devcontainer config
+        pillar: env
+        level: L3
+        required: false
+        path: .devcontainer/devcontainer.json
+      - id: env.devcontainer_dockerfile
+        type: file_exists
+        name: Devcontainer Dockerfile
+        pillar: env
+        level: L3
+        required: false
+        path: .devcontainer/Dockerfile
+
+  - id: env.docker_compose
+    name: Local services setup
+    description: Docker Compose for local development services
+    type: any_of
+    pillar: env
+    level: L3
+    required: false
+    checks:
+      - id: env.docker_compose_yml
+        type: file_exists
+        name: docker-compose.yml
+        pillar: env
+        level: L3
+        required: false
+        path: docker-compose.yml
+      - id: env.docker_compose_yaml
+        type: file_exists
+        name: docker-compose.yaml
+        pillar: env
+        level: L3
+        required: false
+        path: docker-compose.yaml
+      - id: env.compose_yml
+        type: file_exists
+        name: compose.yml
+        pillar: env
+        level: L3
+        required: false
+        path: compose.yml
+
+  # =============================================================================
+  # PILLAR: CI/CD (ci)
+  # =============================================================================
+
+  - id: ci.github_workflow
+    name: GitHub Actions workflow
+    description: CI workflow exists for GitHub Actions
+    type: path_glob
+    pillar: ci
+    level: L1
+    required: false
+    pattern: ".github/workflows/*.{yml,yaml}"
+    min_matches: 1
+
+  - id: ci.push_trigger
+    name: CI triggers on push
+    description: CI workflow runs on push events
+    type: github_workflow_event
+    pillar: ci
+    level: L2
+    required: false
+    event: push
+
+  - id: ci.pr_trigger
+    name: CI triggers on PR
+    description: CI workflow runs on pull request events
+    type: github_workflow_event
+    pillar: ci
+    level: L2
+    required: false
+    event: pull_request
+
+  - id: ci.checkout_action
+    name: Uses checkout action
+    description: Workflow uses actions/checkout
+    type: github_action_present
+    pillar: ci
+    level: L2
+    required: false
+    action: actions/checkout
+    action_pattern: "actions/checkout@v\\d+"
+
+  # =============================================================================
+  # PILLAR: Monorepo (monorepo)
+  # =============================================================================
+
+  - id: monorepo.workspaces
+    name: Workspace configuration
+    description: npm/yarn/pnpm workspaces or similar configured
+    type: any_of
+    pillar: monorepo
+    level: L3
+    required: false
+    checks:
+      - id: monorepo.npm_workspaces
+        type: file_exists
+        name: npm workspaces
+        pillar: monorepo
+        level: L3
+        required: false
+        path: package.json
+        content_regex: '"workspaces"'
+      - id: monorepo.pnpm_workspaces
+        type: file_exists
+        name: pnpm workspaces
+        pillar: monorepo
+        level: L3
+        required: false
+        path: pnpm-workspace.yaml
+      - id: monorepo.lerna
+        type: file_exists
+        name: Lerna config
+        pillar: monorepo
+        level: L3
+        required: false
+        path: lerna.json
+      - id: monorepo.nx
+        type: file_exists
+        name: Nx config
+        pillar: monorepo
+        level: L3
+        required: false
+        path: nx.json
+
+  # =============================================================================
+  # PILLAR: Task Discovery (task_discovery)
+  # =============================================================================
+
+  - id: task_discovery.issue_templates
+    name: Issue templates
+    description: GitHub issue templates for structured bug reports and features
+    type: any_of
+    pillar: task_discovery
+    level: L2
+    required: false
+    checks:
+      - id: task_discovery.issue_template_dir
+        type: path_glob
+        name: Issue template directory
+        pillar: task_discovery
+        level: L2
+        required: false
+        pattern: ".github/ISSUE_TEMPLATE/*.{md,yml,yaml}"
+      - id: task_discovery.issue_template_single
+        type: file_exists
+        name: Single issue template
+        pillar: task_discovery
+        level: L2
+        required: false
+        path: .github/ISSUE_TEMPLATE.md
+
+  - id: task_discovery.pr_template
+    name: Pull request template
+    description: PR template for consistent contribution format
+    type: any_of
+    pillar: task_discovery
+    level: L2
+    required: false
+    checks:
+      - id: task_discovery.pr_template_github
+        type: file_exists
+        name: GitHub PR template
+        pillar: task_discovery
+        level: L2
+        required: false
+        path: .github/PULL_REQUEST_TEMPLATE.md
+      - id: task_discovery.pr_template_root
+        type: file_exists
+        name: Root PR template
+        pillar: task_discovery
+        level: L2
+        required: false
+        path: PULL_REQUEST_TEMPLATE.md
