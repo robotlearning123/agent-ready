@@ -43,12 +43,12 @@ export const PILLARS: Pillar[] = [
 
 export const PILLAR_NAMES: Record<Pillar, string> = {
   docs: 'Documentation',
-  style: 'Code Style',
-  build: 'Build System & CI/CD',
+  style: 'Style & Validation',
+  build: 'Build System',
   test: 'Testing',
   security: 'Security',
-  observability: 'Observability',
-  env: 'Environment',
+  observability: 'Debugging & Observability',
+  env: 'Development Environment',
   task_discovery: 'Task Discovery',
   product: 'Product & Experimentation',
 };

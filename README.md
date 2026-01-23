@@ -1,5 +1,10 @@
 # agent-ready
 
+[![npm version](https://img.shields.io/npm/v/agent-ready.svg)](https://www.npmjs.com/package/agent-ready)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
+
 Factory-compatible repo maturity scanner CLI tool that evaluates repositories against the **9 Pillars / 5 Levels** model and outputs actionable readiness reports for AI agents.
 
 ## Features
@@ -15,8 +20,24 @@ Factory-compatible repo maturity scanner CLI tool that evaluates repositories ag
 ## Installation
 
 ```bash
-npm install
-npm run build
+# Install globally
+npm install -g agent-ready
+
+# Or use npx (no install required)
+npx agent-ready scan .
+```
+
+## Quick Start
+
+```bash
+# Scan current directory
+agent-ready scan .
+
+# See what files to add for better score
+agent-ready init --dry-run
+
+# Generate missing files
+agent-ready init --level L2
 ```
 
 ## Usage
@@ -25,38 +46,38 @@ npm run build
 
 ```bash
 # Scan current directory
-npm run dev -- scan
+agent-ready scan .
 
 # Scan a specific path
-npm run dev -- scan /path/to/repo
+agent-ready scan /path/to/repo
 
 # Use a specific profile
-npm run dev -- scan --profile factory_compat
+agent-ready scan --profile factory_compat
 
 # Output only JSON
-npm run dev -- scan --output json
+agent-ready scan --output json
 
 # Verbose output with all action items
-npm run dev -- scan --verbose
+agent-ready scan --verbose
 
 # Check up to a specific level
-npm run dev -- scan --level L2
+agent-ready scan --level L2
 ```
 
 ### Initialize Missing Files
 
 ```bash
 # Generate all missing recommended files
-npm run dev -- init
+agent-ready init
 
 # Generate files needed for L2
-npm run dev -- init --level L2
+agent-ready init --level L2
 
 # Generate a specific check's template
-npm run dev -- init --check docs.agents_md
+agent-ready init --check docs.agents_md
 
 # Preview what would be created
-npm run dev -- init --dry-run
+agent-ready init --dry-run
 ```
 
 ## Output
@@ -109,29 +130,29 @@ Action Items
 
 ## The 9 Pillars / 5 Levels Model
 
-### Pillars
+### Pillars (Factory.ai Compatible)
 
 | Pillar | Description |
 |--------|-------------|
 | **Documentation** | README, AGENTS.md, CONTRIBUTING, CHANGELOG |
-| **Code Style** | EditorConfig, linter configs, TypeScript |
-| **Build System** | Package manifest, scripts, lock files |
+| **Style & Validation** | EditorConfig, linters, formatters, type checkers |
+| **Build System** | Package manifest, build scripts, lock files, CI/CD |
 | **Testing** | Test files, test framework configuration |
-| **Security** | .gitignore, secret patterns, Dependabot |
-| **Observability** | Logging frameworks |
-| **Environment** | .env.example templates |
-| **CI/CD** | GitHub workflows, triggers, actions |
-| **Monorepo** | Workspace configuration |
+| **Security** | .gitignore, secret patterns, CODEOWNERS, Dependabot |
+| **Debugging & Observability** | Logging, tracing, metrics frameworks |
+| **Development Environment** | .env.example, devcontainer, docker-compose |
+| **Task Discovery** | Issue templates, PR templates |
+| **Product & Experimentation** | Feature flags, analytics, A/B testing |
 
-### Levels
+### Levels (Factory.ai Compatible)
 
-| Level | Name | Threshold |
-|-------|------|-----------|
-| L1 | Minimal | Basic repo setup |
-| L2 | Standard | Good development practices |
-| L3 | Enhanced | Advanced tooling |
-| L4 | Advanced | Enterprise-grade |
-| L5 | Optimal | Best-in-class |
+| Level | Name | Description |
+|-------|------|-------------|
+| L1 | Functional | Code runs but requires manual setup |
+| L2 | Documented | Documentation exists with some automation |
+| L3 | Standardized | Production-ready for agents with clear processes |
+| L4 | Optimized | Fast feedback loops, comprehensive testing |
+| L5 | Autonomous | Self-improving with sophisticated orchestration |
 
 ### Level Gating Rule
 
@@ -175,7 +196,7 @@ checks:
 Then use it:
 
 ```bash
-npm run dev -- scan --profile my_custom_profile
+agent-ready scan --profile my_custom_profile
 ```
 
 ## Development
@@ -185,7 +206,7 @@ npm run dev -- scan --profile my_custom_profile
 npm install
 
 # Run in development mode
-npm run dev -- scan
+agent-ready scan
 
 # Type check
 npm run typecheck
