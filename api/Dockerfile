@@ -41,8 +41,8 @@ COPY --from=builder /app/package.json ./parent.package.json
 # Merge parent dependencies needed at runtime
 RUN cp -r ./parent_modules/* ./node_modules/ 2>/dev/null || true
 
-# Copy profiles (needed for scanning)
-COPY --from=builder /app/profiles ./profiles
+# Copy profiles to dist/profiles (the code looks there relative to compiled output)
+COPY --from=builder /app/profiles ./dist/profiles
 
 # Create non-root user
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
