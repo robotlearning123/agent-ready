@@ -1,12 +1,12 @@
 {
   "repo": "robotlearning123/agent-ready",
-  "commit": "049f6f469bd1864ea3a3351998342368dfbfb774",
-  "timestamp": "2026-01-23T19:25:13.888Z",
+  "commit": "446de452b91250259b6319386adbd3ce76c213b8",
+  "timestamp": "2026-01-23T23:59:19.552Z",
   "profile": "factory_compat",
   "profile_version": "1.0.0",
   "level": "L3",
   "progress_to_next": 0,
-  "overall_score": 71,
+  "overall_score": 85,
   "pillars": {
     "docs": {
       "level_achieved": "L5",
@@ -27,27 +27,27 @@
       "checks_total": 7
     },
     "test": {
-      "level_achieved": "L2",
-      "score": 33,
-      "checks_passed": 1,
+      "level_achieved": "L5",
+      "score": 100,
+      "checks_passed": 3,
       "checks_total": 3
     },
     "security": {
       "level_achieved": "L5",
-      "score": 75,
-      "checks_passed": 3,
+      "score": 100,
+      "checks_passed": 4,
       "checks_total": 4
     },
     "observability": {
-      "level_achieved": "L3",
-      "score": 0,
-      "checks_passed": 0,
+      "level_achieved": "L5",
+      "score": 33,
+      "checks_passed": 1,
       "checks_total": 3
     },
     "env": {
       "level_achieved": "L5",
-      "score": 67,
-      "checks_passed": 2,
+      "score": 100,
+      "checks_passed": 3,
       "checks_total": 3
     },
     "task_discovery": {
@@ -57,7 +57,7 @@
       "checks_total": 2
     },
     "product": {
-      "level_achieved": "L3",
+      "level_achieved": "L5",
       "score": 0,
       "checks_passed": 0,
       "checks_total": 3
@@ -72,21 +72,21 @@
     },
     "L2": {
       "achieved": true,
-      "score": 94,
-      "checks_passed": 16,
+      "score": 100,
+      "checks_passed": 17,
       "checks_total": 17
     },
     "L3": {
-      "achieved": false,
-      "score": 25,
-      "checks_passed": 2,
-      "checks_total": 8
+      "achieved": true,
+      "score": 100,
+      "checks_passed": 6,
+      "checks_total": 6
     },
     "L4": {
       "achieved": false,
       "score": 0,
       "checks_passed": 0,
-      "checks_total": 3
+      "checks_total": 5
     },
     "L5": {
       "achieved": true,
@@ -96,53 +96,6 @@
     }
   },
   "failed_checks": [
-    {
-      "check_id": "test.config",
-      "pillar": "test",
-      "level": "L2",
-      "message": "Only 0/3 alternatives passed (need 1)",
-      "required": false,
-      "suggestions": [
-        "Create files matching pattern: jest.config.*",
-        "Create files matching pattern: vitest.config.*",
-        "Create .mocharc.json"
-      ]
-    },
-    {
-      "check_id": "test.integration_tests",
-      "pillar": "test",
-      "level": "L3",
-      "message": "Only 0/2 alternatives passed (need 1)",
-      "required": false,
-      "suggestions": [
-        "Create files matching pattern: **/integration/**/*.{test,spec}.{js,ts,jsx,tsx}",
-        "Create files matching pattern: **/*.integration.{test,spec}.{js,ts,jsx,tsx}"
-      ]
-    },
-    {
-      "check_id": "security.codeowners",
-      "pillar": "security",
-      "level": "L3",
-      "message": "Only 0/3 alternatives passed (need 1)",
-      "required": false,
-      "suggestions": [
-        "Create .github/CODEOWNERS",
-        "Create CODEOWNERS",
-        "Create docs/CODEOWNERS"
-      ]
-    },
-    {
-      "check_id": "observability.logging",
-      "pillar": "observability",
-      "level": "L3",
-      "message": "No logging framework detected (looking for: winston, pino, bunyan, log4js)",
-      "required": false,
-      "suggestions": [
-        "Add a logging framework to your project",
-        "Node.js: npm install winston or pino",
-        "Python: pip install loguru"
-      ]
-    },
     {
       "check_id": "observability.tracing",
       "pillar": "observability",
@@ -164,21 +117,9 @@
       ]
     },
     {
-      "check_id": "env.docker_compose",
-      "pillar": "env",
-      "level": "L3",
-      "message": "Only 0/3 alternatives passed (need 1)",
-      "required": false,
-      "suggestions": [
-        "Create docker-compose.yml",
-        "Create docker-compose.yaml",
-        "Create compose.yml"
-      ]
-    },
-    {
       "check_id": "product.feature_flags",
       "pillar": "product",
-      "level": "L3",
+      "level": "L4",
       "message": "Only 0/5 alternatives passed (need 1)",
       "required": false,
       "suggestions": [
@@ -192,7 +133,7 @@
     {
       "check_id": "product.analytics",
       "pillar": "product",
-      "level": "L3",
+      "level": "L4",
       "message": "Only 0/5 alternatives passed (need 1)",
       "required": false,
       "suggestions": [
@@ -219,55 +160,6 @@
   ],
   "action_items": [
     {
-      "priority": "medium",
-      "check_id": "test.config",
-      "pillar": "test",
-      "level": "L2",
-      "action": "Create files matching pattern: jest.config.*"
-    },
-    {
-      "priority": "low",
-      "check_id": "test.integration_tests",
-      "pillar": "test",
-      "level": "L3",
-      "action": "Create files matching pattern: **/integration/**/*.{test,spec}.{js,ts,jsx,tsx}"
-    },
-    {
-      "priority": "low",
-      "check_id": "security.codeowners",
-      "pillar": "security",
-      "level": "L3",
-      "action": "Create .github/CODEOWNERS"
-    },
-    {
-      "priority": "low",
-      "check_id": "observability.logging",
-      "pillar": "observability",
-      "level": "L3",
-      "action": "Add a logging framework to your project"
-    },
-    {
-      "priority": "low",
-      "check_id": "env.docker_compose",
-      "pillar": "env",
-      "level": "L3",
-      "action": "Create docker-compose.yml"
-    },
-    {
-      "priority": "low",
-      "check_id": "product.feature_flags",
-      "pillar": "product",
-      "level": "L3",
-      "action": "Install one of: launchdarkly-node-server-sdk, @launchdarkly/node-server-sdk, launchdarkly-react-client-sdk"
-    },
-    {
-      "priority": "low",
-      "check_id": "product.analytics",
-      "pillar": "product",
-      "level": "L3",
-      "action": "Install one of: analytics-node, @segment/analytics-node, @segment/analytics-next"
-    },
-    {
       "priority": "low",
       "check_id": "observability.tracing",
       "pillar": "observability",
@@ -280,6 +172,20 @@
       "pillar": "observability",
       "level": "L4",
       "action": "Install one of: prom-client, statsd-client, @opentelemetry/sdk-metrics, hot-shots, prometheus_client"
+    },
+    {
+      "priority": "low",
+      "check_id": "product.feature_flags",
+      "pillar": "product",
+      "level": "L4",
+      "action": "Install one of: launchdarkly-node-server-sdk, @launchdarkly/node-server-sdk, launchdarkly-react-client-sdk"
+    },
+    {
+      "priority": "low",
+      "check_id": "product.analytics",
+      "pillar": "product",
+      "level": "L4",
+      "action": "Install one of: analytics-node, @segment/analytics-node, @segment/analytics-next"
     },
     {
       "priority": "low",
