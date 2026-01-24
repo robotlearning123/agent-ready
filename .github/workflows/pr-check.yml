@@ -1,0 +1,129 @@
+name: PR Check
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  validate-pr:
+    name: Validate PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title format
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+          requireScope: false
+          subjectPattern: ^(?![A-Z]).+$
+          subjectPatternError: |
+            The subject "{subject}" found in the pull request title "{title}"
+            should start with a lowercase letter.
+
+      - name: Check branch naming
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+        run: |
+          set -eo pipefail
+
+          if [[ -z "$BRANCH_NAME" ]]; then
+            echo "::error::BRANCH_NAME environment variable is not set"
+            exit 1
+          fi
+
+          VALID_PATTERN="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert|hotfix|release)/"
+
+          if [[ ! "$BRANCH_NAME" =~ $VALID_PATTERN ]]; then
+            echo "::error::Branch name '$BRANCH_NAME' does not follow naming convention."
+            echo ""
+            echo "Branch names must start with one of:"
+            echo "  feat/    - New features"
+            echo "  fix/     - Bug fixes"
+            echo "  docs/    - Documentation changes"
+            echo "  style/   - Code style changes"
+            echo "  refactor/- Code refactoring"
+            echo "  perf/    - Performance improvements"
+            echo "  test/    - Test additions/changes"
+            echo "  build/   - Build system changes"
+            echo "  ci/      - CI configuration"
+            echo "  chore/   - Maintenance tasks"
+            echo "  hotfix/  - Urgent fixes"
+            echo "  release/ - Release branches"
+            echo ""
+            echo "Example: feat/add-new-check"
+            exit 1
+          fi
+
+          echo "✅ Branch name '$BRANCH_NAME' follows naming convention"
+
+  scan-readiness:
+    name: Scan Agent Readiness
+    needs: validate-pr
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run agent-ready scan
+        run: |
+          set -eo pipefail
+
+          npm run dev -- scan . --output json
+
+          # Verify the output file was created
+          if [[ ! -f readiness.json ]]; then
+            echo "::error::Scan failed to produce readiness.json output file"
+            exit 1
+          fi
+
+          # Extract values with jq (pre-installed on ubuntu runners)
+          LEVEL=$(jq -r '.level // empty' readiness.json)
+          SCORE=$(jq -r '.score // empty' readiness.json)
+
+          # Validate extracted values
+          if [[ -z "$LEVEL" ]]; then
+            echo "::error::readiness.json missing 'level' field"
+            cat readiness.json
+            exit 1
+          fi
+
+          if [[ -z "$SCORE" ]]; then
+            echo "::error::readiness.json missing 'score' field"
+            cat readiness.json
+            exit 1
+          fi
+
+          echo "## Agent Readiness Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Level | **$LEVEL** |" >> $GITHUB_STEP_SUMMARY
+          echo "| Score | $SCORE% |" >> $GITHUB_STEP_SUMMARY

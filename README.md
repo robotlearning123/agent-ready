@@ -1,5 +1,7 @@
 # agent-ready
 
+[中文文档](./README_CN.md) | English
+
 [![npm version](https://img.shields.io/npm/v/agent-ready.svg)](https://www.npmjs.com/package/agent-ready)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org/)
@@ -33,15 +35,15 @@ Use the hosted API for scanning without installation:
 
 ```bash
 # Submit a scan
-curl -X POST http://137.184.205.191:3000/api/scan \
+curl -X POST https://agent-ready.org/api/scan \
   -H "Content-Type: application/json" \
   -d '{"repo_url":"https://github.com/owner/repo","language":"en"}'
 
 # Check scan status
-curl http://137.184.205.191:3000/api/scan/{scan_id}
+curl https://agent-ready.org/api/scan/{scan_id}
 
 # List available profiles
-curl http://137.184.205.191:3000/api/profiles
+curl https://agent-ready.org/api/profiles
 ```
 
 ### API Features
