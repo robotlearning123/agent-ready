@@ -80,6 +80,7 @@ describe('Profile checks structure', () => {
       'env',
       'task_discovery',
       'product',
+      'agent_config',
     ];
 
     for (const check of profile.checks) {

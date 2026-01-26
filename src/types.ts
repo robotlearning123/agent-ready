@@ -16,8 +16,9 @@ export const LEVEL_NAMES: Record<Level, string> = {
   L5: 'Autonomous',
 };
 
-// Pillar definitions (Factory-compatible 9 Pillars)
+// Pillar definitions (10 Pillars in v0.0.2)
 // Note: CI/CD merged into Build System per Factory spec
+// Note: agent_config added in v0.0.2 for Agent Native configuration
 export type Pillar =
   | 'docs'
   | 'style'
@@ -27,7 +28,8 @@ export type Pillar =
   | 'observability'
   | 'env'
   | 'task_discovery'
-  | 'product'; // Feature flags, analytics, A/B testing
+  | 'product' // Feature flags, analytics, A/B testing
+  | 'agent_config'; // NEW in v0.0.2: Agent Native configuration
 
 export const PILLARS: Pillar[] = [
   'docs',
@@ -39,6 +41,7 @@ export const PILLARS: Pillar[] = [
   'env',
   'task_discovery',
   'product',
+  'agent_config',
 ];
 
 export const PILLAR_NAMES: Record<Pillar, string> = {
@@ -51,6 +54,7 @@ export const PILLAR_NAMES: Record<Pillar, string> = {
   env: 'Development Environment',
   task_discovery: 'Task Discovery',
   product: 'Product & Experimentation',
+  agent_config: 'Agent Configuration',
 };
 
 // Check type discriminators

@@ -163,13 +163,18 @@ function getTemplateForCheck(check: CheckConfig): string | undefined {
     'docs.contributing': 'CONTRIBUTING.md',
     'env.dotenv_example': '.env.example',
     'security.gitignore': '.gitignore',
-    'ci.github_workflow': '.github/workflows/ci.yml',
-    // New templates for Factory parity
+    'build.github_workflow': '.github/workflows/ci.yml',
+    // Templates for Factory parity
     'env.devcontainer': '.devcontainer/devcontainer.json',
     'security.codeowners': '.github/CODEOWNERS',
     'task_discovery.issue_templates': '.github/ISSUE_TEMPLATE/bug_report.md',
     'task_discovery.pr_template': '.github/PULL_REQUEST_TEMPLATE.md',
     'env.docker_compose': 'docker-compose.yml',
+    // Agent Configuration templates (v0.0.2)
+    'agent_config.agents_md': 'AGENTS.md',
+    'agent_config.claude_settings': '.claude/settings.json',
+    'agent_config.cursorrules': '.cursorrules',
+    'agent_config.copilot_config': '.github/copilot-instructions.md',
   };
 
   return templateMap[check.id];

@@ -15,6 +15,7 @@ const translations: Translations = {
     env: '开发环境',
     task_discovery: '任务发现',
     product: '产品与实验',
+    agent_config: 'AI 代理配置',
   },
 
   levels: {
