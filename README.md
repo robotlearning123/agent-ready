@@ -7,23 +7,123 @@
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
 
-Factory-compatible repo maturity scanner CLI tool that evaluates repositories against the **9 Pillars / 5 Levels** model and outputs actionable readiness reports for AI agents.
+**The missing production control layer for AI-written software.**
+
+> Without it: even a single coding agent can slowly destroy a large codebase through behavioral drift and uncontrolled patches.
+>
+> With it: **1000 imperfect agents can work in parallel safely.**
+
+## The Vision
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    AGENT-DRIVEN DEVELOPMENT                      │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐  │
+│  │  SPEC    │ -> │  TASKS   │ -> │  AGENTS  │ -> │  VERIFY  │  │
+│  │  .md     │    │  Queue   │    │  Execute │    │  Gates   │  │
+│  └──────────┘    └──────────┘    └──────────┘    └──────────┘  │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              FROZEN CONTRACTS (types, schemas)            │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │                    CI GATEKEEPING                         │  │
+│  └──────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 ## Demo
 
 ![agent-ready demo](./agent-ready-demo.gif)
 
-*See agent-ready in action: scan your repo and get an instant readiness report.*
+## Quick Start
 
-## Features
+```bash
+# Scan any repository
+npx agent-ready scan .
 
-- **9 Pillars Assessment**: Documentation, Code Style, Build, Testing, Security, Observability, Environment, CI/CD, Monorepo
-- **5 Maturity Levels**: L1 (Minimal) → L5 (Optimal)
-- **80% Gating Rule**: Levels achieved when ≥80% of checks pass AND all required checks pass
-- **Extensible Profiles**: YAML-based check definitions
-- **Multiple Outputs**: JSON (machine-readable) + Markdown (terminal display)
-- **Init Command**: Generate missing files from templates
-- **Monorepo Support**: Detect and scan individual apps
+# See what's needed for the next level
+agent-ready init --dry-run
+
+# Generate missing files
+agent-ready init --level L2
+```
+
+## The 5 Maturity Levels
+
+| Level | Name | What Agents Can Do |
+|-------|------|-------------------|
+| **L1** | Agent-Readable | Agents can **understand** the codebase (CLAUDE.md, README) |
+| **L2** | Agent-Configurable | Agents have **tool configurations** (.cursorrules, settings) |
+| **L3** | Agent-Executable | Agents can **run tasks** (MCP, commands, SPEC.md) |
+| **L4** | Agent-Coordinated | **Multiple agents** can work together (contracts, ownership) |
+| **L5** | Agent-Autonomous | Agents can **self-improve** (feedback loops, conflict resolution) |
+
+## The 11 Pillars
+
+| Pillar | What It Checks |
+|--------|----------------|
+| **Documentation** | README, AGENTS.md, SPEC.md, CONTRIBUTING |
+| **Code Style** | Linters, formatters, EditorConfig |
+| **Build System** | Package manifest, CI/CD, build scripts |
+| **Testing** | Test framework, contract tests, coverage |
+| **Security** | CODEOWNERS, secrets, Dependabot, SAST |
+| **Observability** | Logging, tracing, metrics |
+| **Environment** | .env.example, devcontainer |
+| **Task Discovery** | Issue templates, TASKS.md |
+| **Product** | Feature flags, analytics |
+| **Agent Config** | .claude/, MCP, boundaries, ownership |
+| **Code Quality** | Coverage, complexity, tech debt tracking |
+
+## Agent Control Surface Checks
+
+Beyond "file exists" checks, agent-ready verifies **production control mechanisms**:
+
+### Agent Boundaries (L3)
+```yaml
+# What agents CAN and CANNOT modify
+.claude/boundaries.json
+.agent-boundaries.yml
+.github/CODEOWNERS  # with agent assignments
+```
+
+### Task Discovery (L3)
+```yaml
+# How agents find work
+TASKS.md
+tasks.yaml
+.github/ISSUE_TEMPLATE/*agent*.md
+```
+
+### Frozen Contracts (L4)
+```yaml
+# Interfaces that must not change
+contracts/**/*.ts
+schemas/**/*.json
+*.contract.test.ts
+```
+
+### Agent Coordination (L5)
+```yaml
+# Multi-agent collaboration
+.agent-ownership.json
+AGENTS.md  # with ownership mapping
+.github/workflows/*conflict*.yml
+```
+
+## Spec-Kit Integration
+
+Agent-ready supports [GitHub's spec-kit](https://github.com/github/spec-kit) methodology:
+
+| Check | File | Level |
+|-------|------|-------|
+| Project Constitution | `CONSTITUTION.md` | L3 |
+| Feature Specifications | `SPEC.md`, `specs/**/spec.md` | L3 |
+| Implementation Plans | `PLAN.md`, `specs/**/plan.md` | L4 |
+| API Contracts | `openapi.yaml`, `swagger.json` | L4 |
+| Task Lists | `TASKS.md`, `specs/**/tasks.md` | L3 |
 
 ## Installation
 
@@ -35,61 +135,7 @@ npx agent-ready scan .
 npm install -g agent-ready
 ```
 
-## Online API
-
-Use the hosted API for scanning without installation:
-
-```bash
-# Submit a scan
-curl -X POST https://agent-ready.org/api/scan \
-  -H "Content-Type: application/json" \
-  -d '{"repo_url":"https://github.com/owner/repo","language":"en"}'
-
-# Check scan status
-curl https://agent-ready.org/api/scan/{scan_id}
-
-# List available profiles
-curl https://agent-ready.org/api/profiles
-```
-
-### API Features
-- **Multi-Agent Parallel Analysis**: 9 agents analyze different pillars concurrently
-- **Chinese/English Reports**: Set `"language":"zh"` or `"language":"en"`
-- **Fast Scanning**: ~300ms per repository
-- **Detailed Reports**: Executive summary, pillar details, improvement roadmap
-
-## Claude Code Integration
-
-Install the skill for Claude Code:
-
-```bash
-# Download the skill
-curl -O https://github.com/anthropics/agent-ready/releases/download/v0.0.1/agent-ready.skill
-
-# Install in Claude Code
-claude install agent-ready.skill
-```
-
-Then use `/agent-ready` or ask Claude to "check agent readiness" in any repository.
-
-## Quick Start
-
-```bash
-# Scan current directory
-agent-ready scan .
-
-# See what files to add for better score
-agent-ready init --dry-run
-
-# Generate missing files
-agent-ready init --level L2
-```
-
 ## GitHub Action
-
-Use Agent Ready directly in your CI/CD pipelines:
-
-### Basic Usage
 
 ```yaml
 name: Agent Ready
@@ -101,262 +147,166 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Run Agent Ready
-        uses: your-org/agent-ready@v1
+        uses: robotlearning123/agent-ready@v1
+        with:
+          fail-below-level: 'L2'
+          comment-on-pr: 'true'
 ```
 
-### PR Gate (Require Minimum Level)
-
-```yaml
-- name: Check Agent Readiness
-  uses: your-org/agent-ready@v1
-  with:
-    fail-below-level: 'L2'    # Fail if below L2
-    comment-on-pr: 'true'      # Post results as PR comment
-```
-
-### All Inputs
+### Action Inputs
 
 | Input | Description | Default |
 |-------|-------------|---------|
 | `path` | Path to scan | `.` |
 | `profile` | Profile to use | `factory_compat` |
 | `output-format` | `json`, `markdown`, or `both` | `both` |
-| `fail-below-level` | Fail if level is below (`L1`-`L5` or `none`) | `none` |
-| `verbose` | Enable verbose output | `false` |
-| `upload-artifact` | Upload results as artifact | `true` |
-| `artifact-name` | Name for artifact | `agent-ready-report` |
-| `comment-on-pr` | Post PR comment (PR events only) | `false` |
+| `fail-below-level` | Fail if below level | `none` |
+| `comment-on-pr` | Post PR comment | `false` |
 
-### Outputs
+### Action Outputs
 
 | Output | Description |
 |--------|-------------|
-| `level` | Achieved level (`L1`-`L5` or `null`) |
+| `level` | Achieved level (`L1`-`L5`) |
 | `score` | Overall score (0-100) |
-| `project-type` | Detected type (`cli`, `library`, `webapp`, `web-service`, `monorepo`) |
-| `report-json` | Path to JSON report |
-| `report-markdown` | Path to markdown report |
-| `passed` | Whether threshold was met (`true`/`false`) |
+| `project-type` | `cli`, `library`, `webapp`, `web-service`, `monorepo` |
+| `passed` | Whether threshold was met |
 
-### Using Outputs
-
-```yaml
-- name: Run Scan
-  id: scan
-  uses: your-org/agent-ready@v1
-
-- name: Check Results
-  env:
-    LEVEL: ${{ steps.scan.outputs.level }}
-    SCORE: ${{ steps.scan.outputs.score }}
-  run: |
-    echo "Level: $LEVEL"
-    echo "Score: ${SCORE}%"
-```
-
-See [`examples/workflows/`](./examples/workflows/) for more examples including:
-- [PR Gate](./examples/workflows/pr-gate.yml)
-- [Scheduled Scans](./examples/workflows/scheduled-scan.yml)
-- [Monorepo Scanning](./examples/workflows/monorepo-scan.yml)
-- [Release Gate](./examples/workflows/release-gate.yml)
-
-## Usage
-
-### Scan a Repository
+## Online API
 
 ```bash
-# Scan current directory
-agent-ready scan .
+# Submit a scan
+curl -X POST https://agent-ready.org/api/scan \
+  -H "Content-Type: application/json" \
+  -d '{"repo_url":"https://github.com/owner/repo"}'
 
-# Scan a specific path
-agent-ready scan /path/to/repo
+# Check status
+curl https://agent-ready.org/api/scan/{scan_id}
+```
 
-# Use a specific profile
+## CLI Usage
+
+```bash
+# Scan with verbose output
+agent-ready scan . --verbose
+
+# Use specific profile
 agent-ready scan --profile factory_compat
 
-# Output only JSON
+# Output JSON only
 agent-ready scan --output json
 
-# Verbose output with all action items
-agent-ready scan --verbose
-
-# Check up to a specific level
-agent-ready scan --level L2
+# Initialize missing files
+agent-ready init --level L3 --dry-run
 ```
 
-### Initialize Missing Files
-
-```bash
-# Generate all missing recommended files
-agent-ready init
-
-# Generate files needed for L2
-agent-ready init --level L2
-
-# Generate a specific check's template
-agent-ready init --check docs.agents_md
-
-# Preview what would be created
-agent-ready init --dry-run
-```
-
-## Output
-
-### Terminal Output
+## Output Example
 
 ```
 Agent Readiness Report
-──────────────────────────────────────────────────
+══════════════════════════════════════════════════
 Repository: owner/repo
-Commit:     abc123
 Profile:    factory_compat v1.0.0
 
 ┌─────────────────────────────────────────────────┐
-│          Level: L2                              │
-│          Score: 74%                             │
+│          Level: L3                              │
+│          Score: 78%                             │
+│          Type:  webapp                          │
 └─────────────────────────────────────────────────┘
 
 Pillar Summary
 ──────────────────────────────────────────────────
-  Documentation    L2   100% (5/5)
-  Code Style       L2    85% (3/3)
+  Documentation       L4   90%  ████████░░
+  Agent Config        L3   75%  ███████░░░
+  Testing             L3   80%  ████████░░
   ...
 
-Action Items
+Action Items (Next Level)
 ──────────────────────────────────────────────────
-  [HIGH] L1 Create README.md
-  [MEDIUM] L2 Add build scripts to package.json
-  ...
+  [L4] Create contract tests for API
+  [L4] Add agent ownership mapping
+  [L4] Define frozen contracts
 ```
 
-### JSON Output (readiness.json)
+## The "1000 Idiots" Test
 
-```json
-{
-  "repo": "owner/repo",
-  "commit": "abc123",
-  "profile": "factory_compat",
-  "level": "L2",
-  "progress_to_next": 0.65,
-  "overall_score": 74,
-  "pillars": {
-    "docs": { "level_achieved": "L2", "score": 100 },
-    "build": { "level_achieved": "L2", "score": 85 }
-  },
-  "failed_checks": [...],
-  "action_items": [...]
-}
-```
+A codebase is truly agent-ready when:
 
-## The 9 Pillars / 5 Levels Model
+> **1000 imperfect AI agents can work on it in parallel without destroying it.**
 
-### Pillars (Factory.ai Compatible)
+This requires:
+1. **Clear specifications** (what to build)
+2. **Frozen contracts** (what not to break)
+3. **Strict CI gates** (catch all mistakes)
+4. **Agent boundaries** (who owns what)
+5. **Verification loops** (continuous checking)
 
-| Pillar | Description |
-|--------|-------------|
-| **Documentation** | README, AGENTS.md, CONTRIBUTING, CHANGELOG |
-| **Style & Validation** | EditorConfig, linters, formatters, type checkers |
-| **Build System** | Package manifest, build scripts, lock files, CI/CD |
-| **Testing** | Test files, test framework configuration |
-| **Security** | .gitignore, secret patterns, CODEOWNERS, Dependabot |
-| **Debugging & Observability** | Logging, tracing, metrics frameworks |
-| **Development Environment** | .env.example, devcontainer, docker-compose |
-| **Task Discovery** | Issue templates, PR templates |
-| **Product & Experimentation** | Feature flags, analytics, A/B testing |
-
-### Levels (Factory.ai Compatible)
-
-| Level | Name | Description |
-|-------|------|-------------|
-| L1 | Functional | Code runs but requires manual setup |
-| L2 | Documented | Documentation exists with some automation |
-| L3 | Standardized | Production-ready for agents with clear processes |
-| L4 | Optimized | Fast feedback loops, comprehensive testing |
-| L5 | Autonomous | Self-improving with sophisticated orchestration |
-
-### Level Gating Rule
-
-A level is **achieved** when:
-1. **ALL required checks** at that level pass
-2. **≥80% of all checks** at that level pass
-3. **All previous levels** (L1 to L(N-1)) are already achieved
-
-## Check Types
-
-| Type | Description |
-|------|-------------|
-| `file_exists` | File presence + optional content regex |
-| `path_glob` | Glob pattern with min/max matches |
-| `any_of` | Composite OR check (pass if any child passes) |
-| `github_workflow_event` | CI triggers on specific events |
-| `github_action_present` | Specific GitHub Action used |
-| `build_command_detect` | Build/test commands in package.json/Makefile |
-| `log_framework_detect` | Logging library detection |
+See [VISION.md](./VISION.md) for the complete philosophy.
 
 ## Creating Custom Profiles
 
-Create a YAML file in the `profiles/` directory:
-
 ```yaml
-name: my_custom_profile
+# profiles/my_profile.yaml
+name: my_profile
 version: "1.0.0"
-description: My custom profile
 
 checks:
-  - id: custom.my_check
-    name: My Custom Check
-    description: Checks for something
+  - id: custom.spec_exists
+    name: SPEC.md exists
     type: file_exists
     pillar: docs
-    level: L1
-    required: true
-    path: MY_FILE.md
+    level: L3
+    path: SPEC.md
+
+  - id: custom.contract_tests
+    name: Contract tests
+    type: path_glob
+    pillar: test
+    level: L4
+    pattern: "**/*.contract.test.ts"
+    min_matches: 1
 ```
 
-Then use it:
-
 ```bash
-agent-ready scan --profile my_custom_profile
+agent-ready scan --profile my_profile
 ```
 
 ## Development
 
 ```bash
-# Install dependencies
-npm install
-
-# Run in development mode
-agent-ready scan
-
-# Type check
-npm run typecheck
-
-# Run tests
-npm test
-
-# Build for production
-npm run build
+npm install        # Install dependencies
+npm run dev        # Run in development
+npm test           # Run tests
+npm run build      # Build for production
 ```
 
 ## Project Structure
 
 ```
 agent-ready/
-├── src/                      # CLI source code
-│   ├── index.ts              # CLI entry
-│   ├── types.ts              # Type definitions
-│   ├── checks/               # Check implementations
-│   ├── engine/               # Level gating logic
-│   ├── profiles/             # Profile loader
-│   └── utils/                # FS, git, YAML utilities
+├── src/
+│   ├── index.ts          # CLI entry
+│   ├── checks/           # Check implementations
+│   ├── engine/           # Level gating, project type detection
+│   └── utils/            # FS, git, YAML utilities
 ├── profiles/
-│   └── factory_compat.yaml   # Default profile
-├── templates/                # Init command templates
-└── test/                     # Tests and fixtures
+│   └── factory_compat.yaml   # Default profile (11 pillars, 5 levels)
+├── templates/            # Init command templates
+├── examples/workflows/   # GitHub Action examples
+├── VISION.md             # Agent-driven development philosophy
+└── test/                 # Tests and fixtures
 ```
+
+## Related Projects
+
+- [agent-ready-website](https://github.com/UPKI-AI/agent-ready-website) - Web UI for scanning repos
+- [spec-kit](https://github.com/github/spec-kit) - GitHub's spec-driven development methodology
 
 ## License
 
 MIT
+
+---
+
+**Agent-Ready: From entropy generator to scalable production worker.**
